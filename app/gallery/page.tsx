@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { getMemories } from '@/lib/actions';
 import PolaroidCard from '@/components/ui/PolaroidCard';
 import FloatingBackground from '@/components/ui/FloatingBackground';
 import { useTimeTheme } from '@/hooks/useTimeTheme';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import ConfettiEffect from '@/components/ui/ConfettiEffect';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
@@ -15,6 +15,14 @@ import { cn } from '@/lib/utils';
 export default function MemoryGallery() {
     const [memories, setMemories] = useState<Memory[]>([]);
     const theme = useTimeTheme();
+
+    const containerRef = useRef<HTMLElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start start", "end end"]
+    });
+    const y1 = useTransform(scrollYProgress, [0, 1], [0, 400]);
+    const y2 = useTransform(scrollYProgress, [0, 1], [0, -400]);
 
     useEffect(() => {
         async function fetchMemories() {
@@ -27,9 +35,31 @@ export default function MemoryGallery() {
     const decorativeEmojis = ['📸', '✨', '💖', '🌸', '🎞️', '💌', '🦢', '☁️', '🌹', '💎', '🎨', '🌙', '💍', '🥂', '🍰', '🧸'];
 
     return (
-        <main className={cn("min-h-screen pt-24 pb-48 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
+        <main ref={containerRef} className={cn("min-h-screen pt-24 pb-48 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
             <ConfettiEffect active={true} />
             <FloatingBackground isDark={theme.isDark} count={14} />
+
+            {/* Parallax Film Strips */}
+            <div className="absolute inset-0 pointer-events-none opacity-[0.03] sm:opacity-[0.06] overflow-hidden flex justify-between z-0">
+                <motion.div style={{ y: y1 }} className="flex flex-col gap-8 -mt-[500px] px-2 sm:px-8">
+                    {[...Array(10)].map((_, i) => (
+                        <div key={`left-${i}`} className="w-24 sm:w-32 h-40 sm:h-48 bg-black rounded border-8 border-black border-y-[16px] flex items-center justify-between flex-col py-1">
+                            <div className="w-full flex justify-between px-1"><div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white/30"/><div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white/30"/></div>
+                            <div className="w-full flex-1 bg-white/10 my-1" />
+                            <div className="w-full flex justify-between px-1"><div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white/30"/><div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white/30"/></div>
+                        </div>
+                    ))}
+                </motion.div>
+                <motion.div style={{ y: y2 }} className="flex flex-col gap-12 -mt-24 px-2 sm:px-12 hidden md:flex">
+                    {[...Array(8)].map((_, i) => (
+                        <div key={`right-${i}`} className="w-48 h-64 bg-black rounded border-8 border-black border-y-[16px] flex items-center justify-between flex-col py-1">
+                            <div className="w-full flex justify-between px-1"><div className="w-2 h-2 rounded-full bg-white/30"/><div className="w-2 h-2 rounded-full bg-white/30"/></div>
+                            <div className="w-full flex-1 bg-white/10 my-1" />
+                            <div className="w-full flex justify-between px-1"><div className="w-2 h-2 rounded-full bg-white/30"/><div className="w-2 h-2 rounded-full bg-white/30"/></div>
+                        </div>
+                    ))}
+                </motion.div>
+            </div>
 
             {/* Decorative Emojis Scattered */}
             <div className="absolute inset-0 pointer-events-none select-none overflow-hidden opacity-30">

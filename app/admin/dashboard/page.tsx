@@ -1,5 +1,6 @@
 import { 
   getDailySurprises, 
+  getCouponsWithRedemptions,
   getMemories, 
   getTimelineEvents, 
   getAllReasons, 
@@ -22,6 +23,7 @@ import Link from 'next/link';
 export default async function AdminDashboard() {
   const [
     surprises,
+    coupons,
     memories,
     timeline,
     reasons,
@@ -30,6 +32,7 @@ export default async function AdminDashboard() {
     locations
   ] = await Promise.all([
     getDailySurprises(),
+    getCouponsWithRedemptions(),
     getMemories(),
     getTimelineEvents(),
     getAllReasons(),
@@ -38,8 +41,11 @@ export default async function AdminDashboard() {
     getMemoryLocations()
   ]);
 
+  const couponsUsed = coupons.filter((c) => c.redemption).length;
+
   const cards = [
     { name: 'Daily Surprises', count: surprises.length, icon: Gift, color: '#0071E3', href: '/admin/daily-surprises' },
+    { name: 'Coupons', count: couponsUsed, icon: Gift, color: '#34C759', href: '/admin/coupons' },
     { name: 'Memories', count: memories.length, icon: ImageIcon, color: '#AF52DE', href: '/admin/memories' },
     { name: 'Timeline', count: timeline.length, icon: Calendar, color: '#FF2D55', href: '/admin/timeline-events' },
     { name: '100 Reasons', count: reasons.length, icon: Heart, color: '#FF3B30', href: '/admin/reasons' },

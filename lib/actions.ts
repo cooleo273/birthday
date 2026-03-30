@@ -1,7 +1,7 @@
 'use server';
 
 import { supabase } from '@/lib/supabase';
-import { DailySurprise, Memory, TimelineEvent, Reason, Compliment, JournalEntry, FutureMessage, MemoryLocation, BirthdayEvent } from '@/types/database';
+import { DailySurprise, Memory, TimelineEvent, Reason, Compliment, JournalEntry, FutureMessage, MemoryLocation, BirthdayEvent, CouponWithRedemption, Coupon } from '@/types/database';
 import { revalidatePath } from 'next/cache';
 
 // --- Daily Surprises ---
@@ -244,6 +244,50 @@ export async function deleteJournalEntry(id: string) {
 
     if (error) throw new Error(error.message);
     revalidatePath('/admin/journal');
+}
+
+// --- Coupons ---
+
+export async function getCouponsWithRedemptions(): Promise<CouponWithRedemption[]> {
+    const { data, error } = await supabase
+        .from('coupons')
+        .select('*, coupon_redemptions(id, coupon_id, redeemed_at, note)')
+        .order('created_at', { ascending: true });
+
+    if (error || !data) return [];
+
+    return data.map((row: any) => {
+        const redemption = Array.isArray(row.coupon_redemptions) ? row.coupon_redemptions[0] : null;
+        const { coupon_redemptions, ...coupon } = row;
+        return {
+            ...(coupon as Coupon),
+            redemption: redemption ?? null,
+        } satisfies CouponWithRedemption;
+    });
+}
+
+export async function redeemCoupon(couponId: string, note?: string) {
+    const { data, error } = await supabase
+        .from('coupon_redemptions')
+        .insert([{ coupon_id: couponId, note: note ?? null }])
+        .select()
+        .single();
+
+    if (error) throw new Error(error.message);
+    revalidatePath('/coupons');
+    revalidatePath('/admin/coupons');
+    return data;
+}
+
+export async function resetCouponRedemption(couponId: string) {
+    const { error } = await supabase
+        .from('coupon_redemptions')
+        .delete()
+        .eq('coupon_id', couponId);
+
+    if (error) throw new Error(error.message);
+    revalidatePath('/coupons');
+    revalidatePath('/admin/coupons');
 }
 
 export async function saveFutureMessage(text: string) {

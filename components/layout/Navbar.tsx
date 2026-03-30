@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Calendar, Image as LucideImage, Globe, Sparkles, LayoutGrid, Clock, Map as MapIcon, PenTool, Moon, Gamepad2, X } from 'lucide-react';
+import { Heart, Calendar, Image as LucideImage, Globe, Sparkles, LayoutGrid, Clock, Map as MapIcon, PenTool, Moon, Gamepad2, X, Star, Lock, Gift } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useTimeTheme } from '@/hooks/useTimeTheme';
@@ -22,7 +22,11 @@ const secondaryNavItems = [
     { name: 'Journal', icon: PenTool, href: '/journal' },
     { name: 'Dream Mode', icon: Moon, href: '/dream' },
     { name: 'Memory', icon: Gamepad2, href: '/games/memory' },
-    { name: 'Quiz', icon: Heart, href: '/games/quiz' },
+    { name: 'Word Search', icon: Gamepad2, href: '/games/word-search' },
+    { name: 'Constellation', icon: Star, href: '/constellation' },
+    { name: 'Time Capsule', icon: Lock, href: '/time-capsule' },
+    { name: 'Coupons', icon: Gift, href: '/coupons' },
+    { name: 'Garden', icon: Sparkles, href: '/garden' },
 ];
 
 export default function Navbar() {

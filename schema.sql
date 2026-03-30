@@ -37,12 +37,63 @@ CREATE TABLE reasons (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- If you already inserted reasons before adding uniqueness, you may have duplicates.
+-- This keeps the newest row per unlock_day and deletes older duplicates.
+WITH ranked AS (
+  SELECT
+    id,
+    unlock_day,
+    ROW_NUMBER() OVER (PARTITION BY unlock_day ORDER BY created_at DESC, id DESC) AS rn
+  FROM reasons
+)
+DELETE FROM reasons r
+USING ranked
+WHERE r.id = ranked.id
+  AND ranked.rn > 1;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_constraint
+    WHERE conname = 'reasons_unlock_day_unique'
+  ) THEN
+    ALTER TABLE reasons
+      ADD CONSTRAINT reasons_unlock_day_unique UNIQUE (unlock_day);
+  END IF;
+END$$;
+
 -- Compliments Table
 CREATE TABLE compliments (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   compliment_text TEXT NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Make seeding safe to re-run by preventing exact duplicates.
+WITH ranked_compliments AS (
+  SELECT
+    id,
+    compliment_text,
+    ROW_NUMBER() OVER (PARTITION BY compliment_text ORDER BY created_at DESC, id DESC) AS rn
+  FROM compliments
+)
+DELETE FROM compliments c
+USING ranked_compliments
+WHERE c.id = ranked_compliments.id
+  AND ranked_compliments.rn > 1;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_constraint
+    WHERE conname = 'compliments_text_unique'
+  ) THEN
+    ALTER TABLE compliments
+      ADD CONSTRAINT compliments_text_unique UNIQUE (compliment_text);
+  END IF;
+END$$;
 
 -- Journal Entries Table
 CREATE TABLE journal_entries (
@@ -69,3 +120,24 @@ CREATE TABLE memory_locations (
   image_url TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Love Coupons
+CREATE TABLE coupons (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  title TEXT NOT NULL UNIQUE,
+  description TEXT NOT NULL,
+  icon TEXT,
+  color TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Coupon redemptions (so you can see when she used it)
+CREATE TABLE coupon_redemptions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  coupon_id UUID NOT NULL REFERENCES coupons(id) ON DELETE CASCADE,
+  redeemed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  note TEXT
+);
+
+ALTER TABLE coupon_redemptions
+  ADD CONSTRAINT coupon_redemptions_one_time UNIQUE (coupon_id);

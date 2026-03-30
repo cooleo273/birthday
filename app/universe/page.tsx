@@ -4,7 +4,7 @@ import { useRef, useState, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Stars, Html, OrbitControls, Float } from '@react-three/drei';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, Sparkles, ArrowLeft } from 'lucide-react';
+import { X, ArrowLeft } from 'lucide-react';
 import { useTimeTheme } from '@/hooks/useTimeTheme';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -35,26 +35,56 @@ const MEMORY_LABELS = [
     'You & me',
 ];
 
-const createGalaxyMemories = (count: number): Memory[] => {
+function mulberry32(seed: number) {
+    return function () {
+        let t = (seed += 0x6D2B79F5);
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+
+function shuffled<T>(arr: T[], rand: () => number) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(rand() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+const createGalaxyMemories = (count: number, seed: number): Memory[] => {
+    const rand = mulberry32(seed);
+    const labels = shuffled(MEMORY_LABELS, rand);
     const memories: Memory[] = [];
 
+    // Organic-ish galaxy: dense core, scattered outer ring, slight vertical turbulence.
     for (let i = 0; i < count; i++) {
-        const angle = (i / count) * Math.PI * 2;
-        const radius = 5 + (i % 3);
-        const y = (i % 7) - 3;
+        const t = i / Math.max(1, count - 1);
+        const angle = rand() * Math.PI * 2;
+
+        // Bias radius toward the center for a “core” feel, but keep some outer bodies.
+        const coreBias = Math.pow(rand(), 2.2);
+        const baseRadius = 3.8 + coreBias * 7.2;
+        const spiralWobble = 0.8 * Math.sin(angle * 2 + t * 6.0);
+        const radius = baseRadius + spiralWobble + (rand() - 0.5) * 0.9;
+
+        const x = Math.cos(angle) * radius;
+        const z = Math.sin(angle) * radius;
+        const y = (rand() - 0.5) * 5.5 + Math.sin((x + z) * 0.35) * 0.35;
 
         memories.push({
             id: i + 1,
-            position: [Math.cos(angle) * radius, y, Math.sin(angle) * radius],
+            position: [x, y, z],
             imageUrl: `/universe/${i + 1}.jpg`,
-            label: MEMORY_LABELS[i % MEMORY_LABELS.length],
+            label: labels[i % labels.length],
         });
     }
 
     return memories;
 };
 
-const GALAXY_MEMORIES: Memory[] = createGalaxyMemories(16);
+const GALAXY_MEMORIES: Memory[] = createGalaxyMemories(16, 19052026);
 
 function MemoryCard({ memory, onClick, theme }: { memory: Memory; onClick: (m: Memory) => void; theme: any }) {
     const [hovered, setHovered] = useState(false);
@@ -190,16 +220,37 @@ export default function UniversePage() {
                         className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90"
                         onClick={() => setSelected(null)}
                     >
-                        <motion.img
-                            src={selected.imageUrl}
-                            alt="Memory"
-                            initial={{ scale: 0.95, opacity: 0 }}
+                        <motion.div
+                            initial={{ scale: 0.98, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.95, opacity: 0 }}
-                            transition={{ type: "spring", damping: 20, stiffness: 120 }}
-                            className="max-w-full max-h-full object-contain"
+                            exit={{ scale: 0.98, opacity: 0 }}
+                            transition={{ type: "spring", damping: 22, stiffness: 140 }}
+                            className="w-full max-w-5xl mx-auto px-6"
                             onClick={(e) => e.stopPropagation()}
-                        />
+                        >
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="text-white/70 text-[10px] uppercase tracking-[0.4em] font-bold">
+                                    {selected.label}
+                                </div>
+                                <button
+                                    className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-white/80 transition-colors"
+                                    onClick={() => setSelected(null)}
+                                    aria-label="Close"
+                                >
+                                    <X size={18} />
+                                </button>
+                            </div>
+
+                            <motion.img
+                                src={selected.imageUrl}
+                                alt={selected.label}
+                                initial={{ scale: 0.99, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.99, opacity: 0 }}
+                                transition={{ type: "spring", damping: 20, stiffness: 120 }}
+                                className="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-[0_30px_120px_rgba(0,0,0,0.55)]"
+                            />
+                        </motion.div>
                     </motion.div>
                 )}
             </AnimatePresence>

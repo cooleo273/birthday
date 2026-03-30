@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 const navItems = [
   { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
   { name: 'Daily Surprises', href: '/admin/daily-surprises', icon: Gift },
+  { name: 'Coupons', href: '/admin/coupons', icon: Gift },
   { name: 'Compliments', href: '/admin/compliments', icon: MessageCircleHeart },
   { name: '100 Reasons', href: '/admin/reasons', icon: Heart },
   { name: 'Timeline', href: '/admin/timeline-events', icon: Calendar },

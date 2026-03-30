@@ -73,3 +73,23 @@ export interface BirthdayEvent {
     order_index: number;
     created_at: string;
 }
+
+export interface Coupon {
+    id: string;
+    title: string;
+    description: string;
+    icon: string | null;
+    color: string | null;
+    created_at: string;
+}
+
+export interface CouponRedemption {
+    id: string;
+    coupon_id: string;
+    redeemed_at: string;
+    note: string | null;
+}
+
+export interface CouponWithRedemption extends Coupon {
+    redemption: CouponRedemption | null;
+}
