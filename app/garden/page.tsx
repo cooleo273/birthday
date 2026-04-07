@@ -101,7 +101,7 @@ export default function GardenPage() {
     const theme = useTimeTheme();
     const [flowers, setFlowers] = useState<Flower[]>([]);
     const [clickCount, setClickCount] = useState(0);
-    const containerRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLButtonElement>(null);
     const [dimensions, setDimensions] = useState({ w: 0, h: 0 });
 
     // Initial garden & dimensions
@@ -133,7 +133,7 @@ export default function GardenPage() {
         };
     };
 
-    const handlePlant = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+    const handlePlant = (e: React.MouseEvent<HTMLButtonElement> | React.TouchEvent<HTMLButtonElement>) => {
         if (!containerRef.current) return;
         
         let clientX, clientY;

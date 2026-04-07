@@ -10,7 +10,7 @@ export default function SecretPage() {
     const theme = useTimeTheme();
 
     return (
-        <main className={cn("min-h-screen pt-24 pb-48 px-6 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
+        <main className={cn("min-h-screen pt-16 pb-32 px-4 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
             {/* Soft decorative elements */}
             <div className="absolute inset-0 pointer-events-none">
                 {[...Array(30)].map((_, i) => (
@@ -37,7 +37,7 @@ export default function SecretPage() {
                 ))}
             </div>
 
-            <div className="max-w-2xl mx-auto flex flex-col items-center text-center space-y-16 relative z-10">
+            <div className="max-w-2xl mx-auto flex flex-col items-center text-center space-y-12 relative z-10">
                 <Link href="/" className={cn("inline-flex items-center gap-2 transition-colors group opacity-40 hover:opacity-100 mb-8", theme.textColor)}>
                     <ArrowLeft size={16} />
                     <span className="label-ui text-[10px]">Back to Home</span>

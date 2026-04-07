@@ -35,7 +35,7 @@ export default function MemoryGallery() {
     const decorativeEmojis = ['📸', '✨', '💖', '🌸', '🎞️', '💌', '🦢', '☁️', '🌹', '💎', '🎨', '🌙', '💍', '🥂', '🍰', '🧸'];
 
     return (
-        <main ref={containerRef} className={cn("min-h-screen pt-24 pb-48 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
+        <main ref={containerRef} className={cn("min-h-screen pt-16 pb-32 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
             <ConfettiEffect active={true} />
             <FloatingBackground isDark={theme.isDark} count={14} />
 
@@ -89,8 +89,8 @@ export default function MemoryGallery() {
                 ))}
             </div>
 
-            <div className="max-w-4xl mx-auto px-6 mb-24 text-center relative z-10">
-                <div className="flex justify-center mb-12">
+            <div className="max-w-4xl mx-auto px-4 mb-16 text-center relative z-10">
+                <div className="flex justify-center mb-10">
                     <Link href="/" className={cn("inline-flex items-center gap-2 transition-colors group opacity-40 hover:opacity-100", theme.textColor)}>
                         <ArrowLeft size={16} />
                         <span className="label-ui text-[10px]">Home</span>
@@ -102,7 +102,7 @@ export default function MemoryGallery() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 1.2, ease: "easeOut" }}
                 >
-                    <h1 className={cn("mb-6 serif-display italic leading-none text-[36px] sm:text-[48px] md:text-[80px]", theme.textColor)}>
+                    <h1 className={cn("mb-6 serif-display italic leading-none text-[32px] sm:text-[44px] md:text-[72px]", theme.textColor)}>
                         Our <span className={cn("drop-shadow-[0_0_20px_rgba(225,29,72,0.15)]", theme.accentColor)}>Story.</span>
                     </h1>
                     <div className="flex items-center justify-center gap-6 mb-8">

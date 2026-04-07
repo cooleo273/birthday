@@ -160,7 +160,7 @@ export default function WordSearchPage() {
 
     return (
         <main 
-            className={cn("min-h-screen pt-24 pb-48 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}
+            className={cn("min-h-screen pt-16 pb-32 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}
             onMouseUp={handleUp}
             onTouchEnd={handleUp}
             onMouseLeave={handleUp}
@@ -168,7 +168,7 @@ export default function WordSearchPage() {
             <ConfettiEffect active={won} />
             <FloatingBackground isDark={theme.isDark} count={6} />
 
-            <div className="absolute top-12 left-0 right-0 z-20 px-6 max-w-4xl mx-auto flex justify-between items-center">
+            <div className="absolute top-10 left-0 right-0 z-20 px-4 max-w-4xl mx-auto flex justify-between items-center">
                 <Link href="/" className={cn("inline-flex items-center gap-2 transition-colors group opacity-40 hover:opacity-100", theme.textColor)}>
                     <ArrowLeft size={16} />
                     <span className="label-ui text-[10px]">Home</span>
@@ -178,7 +178,7 @@ export default function WordSearchPage() {
                 </div>
             </div>
 
-            <div className="max-w-2xl mx-auto px-4 sm:px-6 relative z-10 flex flex-col items-center mt-8">
+            <div className="max-w-2xl mx-auto px-4 sm:px-4 relative z-10 flex flex-col items-center mt-8">
                 <div className="text-center mb-10">
                     <h1 className={cn("mb-2 text-4xl serif-display italic", theme.textColor)}>Find Us</h1>
                     <p className={cn("text-xs opacity-60 font-medium tracking-wide", theme.textColor)}>

@@ -176,10 +176,10 @@ export default function CouponsPage() {
     };
 
     return (
-        <main className={cn("min-h-screen pt-24 pb-48 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
+        <main className={cn("min-h-screen pt-16 pb-32 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
             <FloatingBackground isDark={theme.isDark} count={8} />
 
-            <div className="absolute top-12 left-0 right-0 z-20 px-6 max-w-4xl mx-auto flex justify-between items-center">
+            <div className="absolute top-10 left-0 right-0 z-20 px-4 max-w-4xl mx-auto flex justify-between items-center">
                 <Link href="/" className={cn("inline-flex items-center gap-2 transition-colors group opacity-40 hover:opacity-100", theme.textColor)}>
                     <ArrowLeft size={16} />
                     <span className="label-ui text-[10px]">Home</span>
@@ -196,9 +196,9 @@ export default function CouponsPage() {
                 </button>
             </div>
 
-            <div className="max-w-md mx-auto px-6 relative z-10 flex flex-col items-center mt-12">
-                <div className="text-center mb-16">
-                    <h1 className={cn("mb-2 text-4xl serif-display italic", theme.textColor)}>Love Coupons</h1>
+            <div className="max-w-md mx-auto px-4 relative z-10 flex flex-col items-center mt-10">
+                <div className="text-center mb-12">
+                    <h1 className={cn("mb-2 text-3xl md:text-4xl serif-display italic", theme.textColor)}>Love Coupons</h1>
                     <p className={cn("text-xs opacity-60 font-medium tracking-wide uppercase", theme.textColor)}>
                         Swipe to use one (we’ll remember when)
                     </p>

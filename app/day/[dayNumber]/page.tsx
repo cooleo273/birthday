@@ -3,9 +3,8 @@
 import { motion } from 'framer-motion';
 import { use, useState, useEffect } from 'react';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, Sparkles, Play, Volume2, FileText, Heart } from 'lucide-react';
+import { ArrowLeft, Sparkles, Volume2 } from 'lucide-react';
 import Link from 'next/link';
-import EnvelopeLetter from '@/components/ui/EnvelopeLetter';
 import FloatingBackground from '@/components/ui/FloatingBackground';
 import { useTimeTheme } from '@/hooks/useTimeTheme';
 import { cn } from '@/lib/utils';
@@ -14,16 +13,16 @@ import { DailySurprise, BirthdayEvent } from '@/types/database';
 import { getDailySurprise, getBirthdayEvents } from '@/lib/actions';
 import { isDayUnlocked, TOTAL_DAYS } from '@/lib/date-utils';
 
-export default function DayPage({ params }: { params: Promise<{ dayNumber: string }> }) {
+export default function DayPage({ params }: Readonly<{ params: Promise<{ dayNumber: string }> }>) {
     const { dayNumber: dayNumberStr } = use(params);
-    const dayNumber = parseInt(dayNumberStr);
+    const dayNumber = Number.parseInt(dayNumberStr, 10);
     const theme = useTimeTheme();
     const [surprise, setSurprise] = useState<DailySurprise | null>(null);
     const [loading, setLoading] = useState(true);
     const [birthdayEvents, setBirthdayEvents] = useState<BirthdayEvent[]>([]);
 
     useEffect(() => {
-        if (isNaN(dayNumber) || dayNumber < 1 || dayNumber > TOTAL_DAYS) return;
+        if (Number.isNaN(dayNumber) || dayNumber < 1 || dayNumber > TOTAL_DAYS) return;
 
         async function fetchData() {
             try {
@@ -47,17 +46,55 @@ export default function DayPage({ params }: { params: Promise<{ dayNumber: strin
         }
     }, [dayNumber]);
 
-    if (isNaN(dayNumber) || dayNumber < 1 || dayNumber > TOTAL_DAYS) return notFound();
+    if (Number.isNaN(dayNumber) || dayNumber < 1 || dayNumber > TOTAL_DAYS) return notFound();
+
+    const prevDay = dayNumber > 1 ? dayNumber - 1 : null;
+    const nextDay = dayNumber < TOTAL_DAYS ? dayNumber + 1 : null;
 
     if (!isDayUnlocked(dayNumber)) {
         return (
-            <main className={cn("min-h-screen pt-24 pb-48 px-6 relative overflow-hidden bg-gradient-to-br flex flex-col items-center justify-center text-center transition-colors duration-1000", theme.gradient)}>
+            <main className={cn("min-h-screen pt-16 pb-32 px-4 relative overflow-hidden bg-gradient-to-br flex flex-col items-center justify-center text-center transition-colors duration-1000", theme.gradient)}>
                 <FloatingBackground isDark={theme.isDark} count={4} />
                 <div className={cn("w-16 h-16 rounded-full border mb-8 flex items-center justify-center opacity-40", theme.isDark ? "bg-white/5 border-white/10" : "bg-black/5 border-black/5")}>
                     <span className="text-2xl">🌙</span>
                 </div>
-                <h1 className={cn("text-3xl font-serif italic mb-2 opacity-40", theme.textColor)}>Not yet.</h1>
-                <p className={cn("text-sm max-w-xs mx-auto opacity-30 font-medium", theme.textColor)}>This moment hasn't arrived. Come back on day {dayNumber}.</p>
+                <h1 className={cn("text-2xl md:text-3xl font-serif italic mb-2 opacity-40", theme.textColor)}>Not yet.</h1>
+                <p className={cn("text-xs md:text-sm max-w-xs mx-auto opacity-30 font-medium", theme.textColor)}>This moment hasn't arrived. Come back on day {dayNumber}.</p>
+                <div className="mt-10 flex items-center justify-center gap-2">
+                    {prevDay ? (
+                        <Link
+                            href={`/day/${prevDay}`}
+                            className={cn(
+                                "inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] font-semibold border backdrop-blur-xl transition-all active:scale-[0.98] opacity-70 hover:opacity-100",
+                                theme.isDark ? "bg-white/5 border-white/10 text-white" : "bg-white/40 border-white/60 text-black"
+                            )}
+                        >
+                            Prev
+                        </Link>
+                    ) : (
+                        <span className={cn("inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] font-semibold border opacity-20", theme.isDark ? "border-white/10 text-white" : "border-black/10 text-black")}>
+                            Prev
+                        </span>
+                    )}
+                    <span className={cn("text-[10px] font-bold uppercase tracking-[0.25em] opacity-30", theme.textColor)}>
+                        Day {dayNumber}
+                    </span>
+                    {nextDay ? (
+                        <Link
+                            href={`/day/${nextDay}`}
+                            className={cn(
+                                "inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] font-semibold border backdrop-blur-xl transition-all active:scale-[0.98] opacity-70 hover:opacity-100",
+                                theme.isDark ? "bg-white/5 border-white/10 text-white" : "bg-white/40 border-white/60 text-black"
+                            )}
+                        >
+                            Next
+                        </Link>
+                    ) : (
+                        <span className={cn("inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] font-semibold border opacity-20", theme.isDark ? "border-white/10 text-white" : "border-black/10 text-black")}>
+                            Next
+                        </span>
+                    )}
+                </div>
                 <Link href="/calendar" className={cn("mt-12 label-ui hover:opacity-100 transition-opacity", theme.textColor)}>Return to Journey</Link>
             </main>
         );
@@ -97,11 +134,11 @@ export default function DayPage({ params }: { params: Promise<{ dayNumber: strin
     };
 
     return (
-        <main className={cn("min-h-screen pt-24 pb-48 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
+        <main className={cn("min-h-screen pt-16 pb-32 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
             <ConfettiEffect active={!loading && !!surprise} />
             <FloatingBackground isDark={theme.isDark} count={6} />
 
-            <div className="max-w-xl mx-auto px-6 flex flex-col items-center relative z-10">
+            <div className="max-w-xl mx-auto px-4 flex flex-col items-center relative z-10">
                 <Link href="/calendar" className={cn("inline-flex items-center gap-2 transition-colors mb-20 group self-start opacity-40 hover:opacity-100", theme.textColor)}>
                     <ArrowLeft size={16} />
                     <span className="label-ui text-[10px]">Journey</span>
@@ -112,11 +149,11 @@ export default function DayPage({ params }: { params: Promise<{ dayNumber: strin
                     animate={{ opacity: 1, scale: 1 }}
                     className="w-full"
                 >
-                    <div className="text-center mb-16">
+                    <div className="text-center mb-12">
                         <div className={cn("label-ui mb-3 font-black", theme.accentColor)}>
                             {surprise?.type || 'Something for you'}
                         </div>
-                        <h1 className={cn("text-3xl md:text-5xl font-serif italic mb-2 tracking-tight line-clamp-2", theme.textColor)}>
+                        <h1 className={cn("text-2xl md:text-4xl font-serif italic mb-2 tracking-tight line-clamp-2", theme.textColor)}>
                             {surprise?.title || 'Today'}
                         </h1>
                         <div className={cn("w-12 h-0.5 mx-auto mt-6 opacity-10", theme.isDark ? "bg-white" : "bg-black")} />
@@ -129,7 +166,7 @@ export default function DayPage({ params }: { params: Promise<{ dayNumber: strin
                         </div>
                     ) : (
                         <div className={cn(
-                            "glass-card p-8 md:p-12 rounded-[3rem] shadow-2xl relative overflow-hidden",
+                            "glass-card p-5 md:p-7 rounded-[2.25rem] shadow-2xl relative overflow-hidden",
                             theme.isDark ? "bg-white/5 border-white/10" : "bg-white/20 border-white/60"
                         )}>
                             <div className={cn("absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent to-transparent opacity-20", theme.isDark ? "via-rose-300" : "via-rose-400")} />
@@ -137,18 +174,56 @@ export default function DayPage({ params }: { params: Promise<{ dayNumber: strin
                             {renderMedia()}
 
                             <div className="prose prose-stone max-w-none">
-                                <p className={cn("text-xl md:text-2xl leading-relaxed serif-display italic font-medium opacity-80", theme.textColor)}>
+                                <p className={cn("text-base md:text-lg leading-relaxed serif-display italic font-medium opacity-80", theme.textColor)}>
                                     {surprise?.content || "No message attached, but you're still amazing!"}
                                 </p>
                             </div>
 
-                            <div className={cn("mt-12 flex items-center gap-2 opacity-20", theme.textColor)}>
+                            <div className={cn("mt-8 flex items-center gap-2 opacity-20", theme.textColor)}>
                                 <Sparkles size={12} />
                                 <span className="text-[9px] font-bold uppercase tracking-[0.3em]">Day {dayNumber} • Hand-crafted with love</span>
                             </div>
                         </div>
                     )}
                 </motion.div>
+
+                <div className="w-full mt-10 flex items-center justify-between gap-3">
+                    {prevDay ? (
+                        <Link
+                            href={`/day/${prevDay}`}
+                            className={cn(
+                                "flex-1 inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] font-semibold border backdrop-blur-xl transition-all active:scale-[0.98] opacity-70 hover:opacity-100",
+                                theme.isDark ? "bg-white/5 border-white/10 text-white" : "bg-white/40 border-white/60 text-black"
+                            )}
+                        >
+                            Prev
+                        </Link>
+                    ) : (
+                        <span className={cn("flex-1 inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] font-semibold border opacity-20", theme.isDark ? "border-white/10 text-white" : "border-black/10 text-black")}>
+                            Prev
+                        </span>
+                    )}
+
+                    <span className={cn("px-2 text-[10px] font-bold uppercase tracking-[0.25em] opacity-30", theme.textColor)}>
+                        Day {dayNumber}
+                    </span>
+
+                    {nextDay ? (
+                        <Link
+                            href={`/day/${nextDay}`}
+                            className={cn(
+                                "flex-1 inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] font-semibold border backdrop-blur-xl transition-all active:scale-[0.98] opacity-70 hover:opacity-100",
+                                theme.isDark ? "bg-white/5 border-white/10 text-white" : "bg-white/40 border-white/60 text-black"
+                            )}
+                        >
+                            Next
+                        </Link>
+                    ) : (
+                        <span className={cn("flex-1 inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] font-semibold border opacity-20", theme.isDark ? "border-white/10 text-white" : "border-black/10 text-black")}>
+                            Next
+                        </span>
+                    )}
+                </div>
 
                 {dayNumber === 62 && (
                     <section className="w-full mt-16 space-y-6">

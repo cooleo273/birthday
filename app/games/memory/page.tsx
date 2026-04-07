@@ -101,10 +101,10 @@ export default function MemoryGamePage() {
     }, [cards]);
 
     return (
-        <main className={cn("min-h-screen pt-24 pb-48 px-6 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
+        <main className={cn("min-h-screen pt-16 pb-32 px-4 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
             <FloatingBackground isDark={theme.isDark} count={6} />
 
-            <div className="max-w-4xl mx-auto px-6 mb-12 text-center relative z-10">
+            <div className="max-w-4xl mx-auto px-4 mb-10 text-center relative z-10">
                 <Link href="/" className={cn("inline-flex items-center gap-2 transition-colors mb-12 group opacity-40 hover:opacity-100", theme.textColor)}>
                     <ArrowLeft size={16} />
                     <span className="label-ui text-[10px]">Home</span>
@@ -117,7 +117,7 @@ export default function MemoryGamePage() {
                     Match the pairs to reveal a secret birthday message.
                 </p>
 
-                <div className={cn("mt-8 inline-flex items-center gap-3 px-6 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest transition-all", 
+                <div className={cn("mt-7 inline-flex items-center gap-3 px-5 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-widest transition-all", 
                     theme.isDark ? "bg-white/5 border-white/10" : "bg-black/5 border-black/5",
                     theme.textColor
                 )}>

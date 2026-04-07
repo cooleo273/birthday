@@ -47,10 +47,10 @@ export default function JournalPage() {
     }
 
     return (
-        <main className={cn("min-h-screen pt-24 pb-48 px-6 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
+        <main className={cn("min-h-screen pt-16 pb-32 px-4 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
             <FloatingBackground isDark={theme.isDark} count={8} />
 
-            <div className="text-center mb-16 relative z-10">
+            <div className="text-center mb-12 relative z-10">
                 <h1 className={cn("mb-4 serif-display italic", theme.textColor)}>Private <span className="text-romantic-rose">Space.</span></h1>
                 <p className={cn("opacity-50 max-w-sm mx-auto", theme.textColor)}>A quiet place for your thoughts.</p>
             </div>
@@ -64,7 +64,7 @@ export default function JournalPage() {
                         <button
                             onClick={() => setIsFuture(false)}
                             className={cn(
-                                "flex-1 py-3 px-4 rounded-[1.75rem] flex items-center justify-center gap-2 transition-all text-xs font-bold uppercase tracking-widest",
+                                "flex-1 py-2.5 px-4 rounded-[1.75rem] flex items-center justify-center gap-2 transition-all text-xs font-bold uppercase tracking-widest",
                                 !isFuture 
                                     ? (theme.isDark ? "bg-rose-50 text-[#321d28] shadow-sm" : "bg-white text-black shadow-sm") 
                                     : cn("opacity-30 hover:opacity-100", theme.textColor)
@@ -76,7 +76,7 @@ export default function JournalPage() {
                         <button
                             onClick={() => setIsFuture(true)}
                             className={cn(
-                                "flex-1 py-3 px-4 rounded-[1.75rem] flex items-center justify-center gap-2 transition-all text-xs font-bold uppercase tracking-widest",
+                                "flex-1 py-2.5 px-4 rounded-[1.75rem] flex items-center justify-center gap-2 transition-all text-xs font-bold uppercase tracking-widest",
                                 isFuture 
                                     ? (theme.isDark ? "bg-rose-50 text-[#321d28] shadow-sm" : "bg-white text-black shadow-sm") 
                                     : cn("opacity-30 hover:opacity-100", theme.textColor)
@@ -87,13 +87,13 @@ export default function JournalPage() {
                         </button>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="p-8 md:p-10">
+                <form onSubmit={handleSubmit} className="p-6 md:p-7">
                         <textarea
                             value={text}
                             onChange={(e) => setText(e.target.value)}
                             placeholder={isFuture ? "A message for your birthday..." : "Write anything..."}
                             className={cn(
-                                "w-full h-48 bg-transparent border-none focus:ring-0 text-xl font-medium placeholder:opacity-20 resize-none serif-display italic",
+                            "w-full h-44 bg-transparent border-none focus:ring-0 text-lg font-medium placeholder:opacity-20 resize-none serif-display italic",
                                 theme.textColor
                             )}
                         />
@@ -122,11 +122,11 @@ export default function JournalPage() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 key={entry.id}
                                 className={cn(
-                                    "glass-card p-10 rounded-[2.5rem] shadow-lg transition-all duration-500",
+                                "glass-card p-7 rounded-[2.25rem] shadow-lg transition-all duration-500",
                                     theme.isDark ? "bg-white/5 border-white/5" : "bg-white/40 border-black/5"
                                 )}
                             >
-                                <p className={cn("text-lg md:text-xl mb-6 leading-relaxed serif-display italic opacity-70", theme.textColor)}>"{entry.text}"</p>
+                            <p className={cn("text-base md:text-lg mb-5 leading-relaxed serif-display italic opacity-70", theme.textColor)}>"{entry.text}"</p>
                                 <p className={cn("text-[10px] font-black uppercase tracking-widest opacity-20", theme.textColor)}>
                                     {new Date(entry.created_at).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                                 </p>

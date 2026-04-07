@@ -34,7 +34,7 @@ export default function BirthdayPage() {
     }, []);
 
     return (
-        <main className={cn("min-h-screen pt-24 pb-48 px-6 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
+        <main className={cn("min-h-screen pt-16 pb-32 px-4 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
             <AnimatePresence mode="wait">
                 {step === 0 && (
                     <motion.div
@@ -43,7 +43,7 @@ export default function BirthdayPage() {
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 1.2 }}
                         transition={{ type: 'spring', bounce: 0.4 }}
-                        className="space-y-12 max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[70vh]"
+                        className="space-y-10 max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[70vh]"
                     >
                         <motion.div
                             animate={{ rotate: [0, -10, 10, -10, 0], scale: [1, 1.1, 1] }}
@@ -53,7 +53,7 @@ export default function BirthdayPage() {
                         </motion.div>
 
                         <div className="text-center">
-                            <h1 className={cn("text-6xl md:text-8xl font-serif italic mb-6 tracking-tighter", theme.textColor)}>
+                            <h1 className={cn("text-5xl md:text-7xl font-serif italic mb-6 tracking-tighter", theme.textColor)}>
                                 Happy Birthday,
                                 <br />
                                 <motion.span
@@ -64,7 +64,7 @@ export default function BirthdayPage() {
                                     Hana.
                                 </motion.span>
                             </h1>
-                            <p className={cn("text-lg md:text-xl max-w-xl mx-auto opacity-50 font-medium leading-relaxed serif-display italic", theme.textColor)}>
+                            <p className={cn("text-base md:text-lg max-w-xl mx-auto opacity-50 font-medium leading-relaxed serif-display italic", theme.textColor)}>
                                 These 60 days were just a small reminder of how much light you bring into my world.
                             </p>
                         </div>

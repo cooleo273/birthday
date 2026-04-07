@@ -25,10 +25,10 @@ export default function ReasonsPage() {
     }, []);
 
     return (
-        <main className={cn("min-h-screen pt-24 pb-48 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
+        <main className={cn("min-h-screen pt-16 pb-32 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
             <FloatingBackground isDark={theme.isDark} count={8} />
 
-            <div className="max-w-4xl mx-auto px-6 relative z-10">
+            <div className="max-w-4xl mx-auto px-4 relative z-10">
                 <Link href="/" className={cn("inline-flex items-center gap-2 transition-colors mb-8 md:mb-16 group opacity-40 hover:opacity-100", theme.textColor)}>
                     <ArrowLeft size={16} />
                     <span className="label-ui text-[10px]">Home</span>
@@ -44,17 +44,17 @@ export default function ReasonsPage() {
                         A quiet space where I tell you why you mean so much to me.
                     </p>
 
-                    <div className="w-full max-w-2xl space-y-8">
+                    <div className="w-full max-w-2xl space-y-6">
                         {reasons.length > 0 ? reasons.map((reason, idx) => (
                             <motion.div
                                 initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ delay: idx * 0.1 }}
                                 key={reason.id}
-                                className="glass-card p-6 sm:p-8 md:p-10 rounded-[2.5rem] border-white/50 text-left"
+                                className="glass-card p-5 sm:p-6 md:p-7 rounded-[2.25rem] border-white/50 text-left"
                             >
                                 <span className="label-ui text-[10px] mb-4 block opacity-30">Reason #{reason.unlock_day}</span>
-                                <p className="text-xl md:text-2xl font-medium serif-display italic leading-relaxed">
+                                <p className="text-base md:text-lg font-medium serif-display italic leading-relaxed">
                                     "{reason.reason_text}"
                                 </p>
                             </motion.div>

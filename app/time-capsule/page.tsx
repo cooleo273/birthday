@@ -38,17 +38,17 @@ export default function TimeCapsulePage() {
     if (!mounted) return null;
 
     return (
-        <main className={cn("min-h-screen pt-24 pb-48 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
+        <main className={cn("min-h-screen pt-16 pb-32 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
             <FloatingBackground isDark={theme.isDark} count={8} />
 
-            <div className="absolute top-12 left-0 right-0 z-20 px-6 max-w-4xl mx-auto">
+            <div className="absolute top-10 left-0 right-0 z-20 px-4 max-w-4xl mx-auto">
                 <Link href="/" className={cn("inline-flex items-center gap-2 transition-colors group opacity-40 hover:opacity-100", theme.textColor)}>
                     <ArrowLeft size={16} />
                     <span className="label-ui text-[10px]">Home</span>
                 </Link>
             </div>
 
-            <div className="max-w-2xl mx-auto px-6 relative z-10 flex flex-col items-center justify-center min-h-[60vh]">
+            <div className="max-w-2xl mx-auto px-4 relative z-10 flex flex-col items-center justify-center min-h-[60vh]">
                 <AnimatePresence mode="wait">
                     {!isUnlocked ? (
                         <motion.div
@@ -76,8 +76,8 @@ export default function TimeCapsulePage() {
                             </div>
 
                             <div>
-                                <h1 className={cn("mb-4 text-3xl serif-display italic", theme.textColor)}>Sealed Until Your Birthday</h1>
-                                <p className={cn("opacity-60 text-sm max-w-sm mx-auto mb-8", theme.textColor)}>
+                                <h1 className={cn("mb-3 text-2xl md:text-3xl serif-display italic", theme.textColor)}>Sealed Until Your Birthday</h1>
+                                <p className={cn("opacity-60 text-xs md:text-sm max-w-sm mx-auto mb-7", theme.textColor)}>
                                     Some words are meant to be read at exactly the right time.
                                 </p>
                                 <div className="scale-90 opacity-80">

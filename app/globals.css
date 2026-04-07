@@ -82,23 +82,23 @@ body {
 
 /* Typography Scale */
 h1 {
-  @apply text-[28px] md:text-[36px] font-bold tracking-tight leading-tight;
+  @apply text-[24px] md:text-[32px] font-bold tracking-tight leading-tight;
 }
 
 h2 {
-  @apply text-[20px] md:text-[24px] font-bold tracking-tight;
+  @apply text-[18px] md:text-[22px] font-bold tracking-tight;
 }
 
 h3 {
-  @apply text-[16px] md:text-[18px] font-semibold;
+  @apply text-[15px] md:text-[17px] font-semibold;
 }
 
 p {
-  @apply text-[14px] md:text-[15px] leading-relaxed text-[#86868B];
+  @apply text-[13px] md:text-[14px] leading-relaxed text-[#86868B];
 }
 
 .label-ui {
-  @apply text-[11px] font-bold tracking-widest uppercase text-[#86868B];
+  @apply text-[10px] font-bold tracking-widest uppercase text-[#86868B];
 }
 
 .serif-display {
@@ -116,11 +116,11 @@ p {
   }
 
   .btn-apple {
-    @apply px-8 py-4 rounded-full font-semibold transition-all duration-500 active:scale-[0.98] focus:ring-4 focus:ring-romantic-rose/20 outline-none shadow-xl hover:shadow-2xl hover:-translate-y-1;
+    @apply px-6 py-3 rounded-full font-semibold transition-all duration-500 active:scale-[0.98] focus:ring-4 focus:ring-romantic-rose/20 outline-none shadow-xl hover:shadow-2xl hover:-translate-y-1;
   }
 
   .btn-romantic-ghost {
-    @apply px-8 py-4 rounded-full border border-black/10 text-black font-semibold hover:bg-black/5 transition-all duration-500 active:scale-[0.98];
+    @apply px-6 py-3 rounded-full border border-black/10 text-black font-semibold hover:bg-black/5 transition-all duration-500 active:scale-[0.98];
 
     &.ghost-white {
       @apply border-white/20 text-white hover:bg-white/10;

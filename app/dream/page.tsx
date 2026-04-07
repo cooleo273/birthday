@@ -20,7 +20,7 @@ export default function DreamPage() {
     const theme = useTimeTheme();
 
     return (
-        <main className={cn("min-h-screen pt-24 pb-48 px-6 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
+        <main className={cn("min-h-screen pt-16 pb-32 px-4 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
             {/* Ambient Stars - always there but subtler in morning */}
             {Array.from({ length: 60 }).map((_, i) => (
                 <motion.div
@@ -51,8 +51,8 @@ export default function DreamPage() {
                 )}
             </motion.div>
 
-            <div className="max-w-4xl mx-auto px-6 relative z-10 flex flex-col items-center">
-                <Link href="/" className={cn("inline-flex items-center gap-2 transition-colors mb-20 group opacity-40 hover:opacity-100", theme.textColor)}>
+            <div className="max-w-4xl mx-auto px-4 relative z-10 flex flex-col items-center">
+                <Link href="/" className={cn("inline-flex items-center gap-2 transition-colors mb-14 group opacity-40 hover:opacity-100", theme.textColor)}>
                     <ArrowLeft size={16} />
                     <span className="label-ui text-[10px]">Home</span>
                 </Link>
@@ -64,10 +64,10 @@ export default function DreamPage() {
                         transition={{ duration: 1 }}
                     >
                         <Star className={cn("mx-auto mb-8", theme.accentColor)} size={48} fill="currentColor" />
-                        <h1 className={cn("text-5xl md:text-7xl font-serif italic mb-4", theme.textColor)}>
+                        <h1 className={cn("text-4xl md:text-6xl font-serif italic mb-4", theme.textColor)}>
                             Dream <span className="serif-display">Mode.</span>
                         </h1>
-                        <p className={cn("text-[10px] font-bold uppercase tracking-[0.4em] mb-16 opacity-40", theme.textColor)}>A quiet moment just for you</p>
+                        <p className={cn("text-[10px] font-bold uppercase tracking-[0.4em] mb-12 opacity-40", theme.textColor)}>A quiet moment just for you</p>
 
                         {!theme.isDark && (
                             <motion.div 
@@ -91,7 +91,7 @@ export default function DreamPage() {
                                 theme.isDark ? "bg-white/5 border-white/10" : "bg-white/40 border-black/5"
                             )}
                         >
-                            <p className={cn("text-xl md:text-2xl font-serif leading-relaxed italic opacity-80", theme.textColor)}>
+                            <p className={cn("text-base md:text-lg font-serif leading-relaxed italic opacity-80", theme.textColor)}>
                                 "{NIGHT_MESSAGES[messageIdx]}"
                             </p>
                         </motion.div>

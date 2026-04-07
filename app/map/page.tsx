@@ -18,10 +18,10 @@ export default function MapPage() {
     }, []);
 
     return (
-        <main className={cn("min-h-screen pt-24 pb-48 px-6 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
+        <main className={cn("min-h-screen pt-16 pb-32 px-4 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
             <FloatingBackground isDark={theme.isDark} count={8} />
 
-            <div className="max-w-4xl mx-auto px-6 mb-24 text-center relative z-10">
+            <div className="max-w-4xl mx-auto px-4 mb-16 text-center relative z-10">
                 <Link href="/" className={cn("inline-flex items-center gap-2 transition-colors mb-12 group opacity-40 hover:opacity-100", theme.textColor)}>
                     <ArrowLeft size={16} />
                     <span className="label-ui text-[10px]">Home</span>
@@ -35,7 +35,7 @@ export default function MapPage() {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-12 relative z-10 max-w-7xl mx-auto px-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-7 md:gap-10 relative z-10 max-w-7xl mx-auto px-0">
                 {locations.map((loc) => (
                     <div key={loc.id} className={cn(
                         "glass-card group p-6 rounded-[3rem] relative overflow-hidden transition-all duration-700",

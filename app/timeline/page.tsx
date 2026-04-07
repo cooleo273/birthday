@@ -26,10 +26,10 @@ export default function TimelinePage() {
     }, []);
 
     return (
-        <main className={cn("min-h-screen pt-24 pb-48 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
+        <main className={cn("min-h-screen pt-16 pb-32 relative overflow-hidden bg-gradient-to-br transition-colors duration-1000", theme.gradient)}>
             <FloatingBackground isDark={theme.isDark} count={8} />
 
-            <div className="max-w-4xl mx-auto px-6 mb-24 text-center relative z-10">
+            <div className="max-w-4xl mx-auto px-4 mb-16 text-center relative z-10">
                 <Link href="/" className={cn("inline-flex items-center gap-2 transition-colors mb-12 group opacity-40 hover:opacity-100", theme.textColor)}>
                     <ArrowLeft size={16} />
                     <span className="label-ui text-[10px]">Home</span>
@@ -41,10 +41,10 @@ export default function TimelinePage() {
                 <p className={cn("opacity-40 max-w-lg mx-auto font-medium", theme.textColor)}>Every moment we've shared is a treasure.</p>
             </div>
 
-            <div className="relative max-w-4xl mx-auto px-6 z-10">
+            <div className="relative max-w-4xl mx-auto px-4 z-10">
                 <div className={cn("absolute left-[2.25rem] md:left-1/2 top-0 bottom-0 w-[1px] -translate-x-1/2", theme.isDark ? "bg-white/10" : "bg-black/10")} />
 
-                <div className="space-y-12 md:space-y-32">
+                <div className="space-y-10 md:space-y-24">
                     {events.map((event, index) => {
                         const Icon = iconMap[event.icon_name || 'Heart'] || Heart;
                         const isEven = index % 2 === 0;
