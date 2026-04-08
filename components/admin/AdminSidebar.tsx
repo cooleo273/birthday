@@ -10,7 +10,6 @@ import {
   Heart, 
   Calendar, 
   Image, 
-  MapPin, 
   BookHeart
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -23,7 +22,6 @@ const navItems = [
   { name: '100 Reasons', href: '/admin/reasons', icon: Heart },
   { name: 'Timeline', href: '/admin/timeline-events', icon: Calendar },
   { name: 'Memories', href: '/admin/memories', icon: Image },
-  { name: 'Memory Map', href: '/admin/memory-locations', icon: MapPin },
   { name: 'Birthday Program', href: '/admin/birthday-program', icon: Calendar },
   { name: 'Journal', href: '/admin/journal', icon: BookHeart },
 ];

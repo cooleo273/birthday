@@ -110,17 +110,6 @@ CREATE TABLE future_messages (
   unlocked BOOLEAN DEFAULT FALSE
 );
 
--- Memory Map Table
-CREATE TABLE memory_locations (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  title TEXT NOT NULL,
-  description TEXT,
-  latitude DOUBLE PRECISION NOT NULL,
-  longitude DOUBLE PRECISION NOT NULL,
-  image_url TEXT,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
 -- Love Coupons
 CREATE TABLE coupons (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,

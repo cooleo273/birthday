@@ -5,8 +5,7 @@ import {
   getTimelineEvents, 
   getAllReasons, 
   getCompliments, 
-  getJournalEntries,
-  getMemoryLocations
+  getJournalEntries
 } from '@/lib/actions';
 import { 
   Gift, 
@@ -15,7 +14,6 @@ import {
   Calendar, 
   MessageCircleHeart, 
   BookHeart,
-  MapPin,
   ChevronRight
 } from 'lucide-react';
 import Link from 'next/link';
@@ -28,8 +26,7 @@ export default async function AdminDashboard() {
     timeline,
     reasons,
     compliments,
-    journal,
-    locations
+    journal
   ] = await Promise.all([
     getDailySurprises(),
     getCouponsWithRedemptions(),
@@ -37,8 +34,7 @@ export default async function AdminDashboard() {
     getTimelineEvents(),
     getAllReasons(),
     getCompliments(),
-    getJournalEntries(),
-    getMemoryLocations()
+    getJournalEntries()
   ]);
 
   const couponsUsed = coupons.filter((c) => c.redemption).length;
@@ -50,7 +46,6 @@ export default async function AdminDashboard() {
     { name: 'Timeline', count: timeline.length, icon: Calendar, color: '#FF2D55', href: '/admin/timeline-events' },
     { name: '100 Reasons', count: reasons.length, icon: Heart, color: '#FF3B30', href: '/admin/reasons' },
     { name: 'Compliments', count: compliments.length, icon: MessageCircleHeart, color: '#FF9500', href: '/admin/compliments' },
-    { name: 'Memory Map', count: locations.length, icon: MapPin, color: '#34C759', href: '/admin/memory-locations' },
     { name: 'Journal', count: journal.length, icon: BookHeart, color: '#5856D6', href: '/admin/journal' },
   ];
 

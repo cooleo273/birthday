@@ -1,7 +1,7 @@
 'use server';
 
 import { supabase } from '@/lib/supabase';
-import { DailySurprise, Memory, TimelineEvent, Reason, Compliment, JournalEntry, FutureMessage, MemoryLocation, BirthdayEvent, CouponWithRedemption, Coupon } from '@/types/database';
+import { DailySurprise, Memory, TimelineEvent, Reason, Compliment, JournalEntry, FutureMessage, BirthdayEvent, CouponWithRedemption, Coupon } from '@/types/database';
 import { revalidatePath } from 'next/cache';
 
 // --- Daily Surprises ---
@@ -307,41 +307,6 @@ export async function getFutureMessages(): Promise<FutureMessage[]> {
 
     if (error) return [];
     return data;
-}
-
-// --- Memory Map Locations ---
-
-export async function getMemoryLocations(): Promise<MemoryLocation[]> {
-    const { data, error } = await supabase
-        .from('memory_locations')
-        .select('*');
-
-    if (error) return [];
-    return data;
-}
-
-export async function upsertMemoryLocation(location: Partial<MemoryLocation>) {
-    const { data, error } = await supabase
-        .from('memory_locations')
-        .upsert(location)
-        .select()
-        .single();
-
-    if (error) throw new Error(error.message);
-    revalidatePath('/admin/memory-locations');
-    revalidatePath('/map');
-    return data;
-}
-
-export async function deleteMemoryLocation(id: string) {
-    const { error } = await supabase
-        .from('memory_locations')
-        .delete()
-        .eq('id', id);
-
-    if (error) throw new Error(error.message);
-    revalidatePath('/admin/memory-locations');
-    revalidatePath('/map');
 }
 
 // --- Images / Media ---

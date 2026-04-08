@@ -54,16 +54,6 @@ export interface FutureMessage {
     unlocked: boolean;
 }
 
-export interface MemoryLocation {
-    id: string;
-    title: string;
-    description: string | null;
-    latitude: number;
-    longitude: number;
-    image_url: string | null;
-    created_at: string;
-}
-
 export interface BirthdayEvent {
     id: string;
     event_time: string;
