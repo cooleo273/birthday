@@ -1,13 +1,14 @@
 'use client';
 
-import { useRef, useState, Suspense } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { Stars, Html, OrbitControls, Float } from '@react-three/drei';
+import { useMemo, useRef, useState, Suspense } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Stars, Html, OrbitControls, Float, Sparkles, Points, PointMaterial } from '@react-three/drei';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ArrowLeft } from 'lucide-react';
+import { X, ArrowLeft, ChevronLeft, ChevronRight, Compass, Sparkles as SparklesIcon, Shuffle } from 'lucide-react';
 import { useTimeTheme } from '@/hooks/useTimeTheme';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import * as THREE from 'three';
 
 interface Memory {
     id: number;
@@ -84,9 +85,48 @@ const createGalaxyMemories = (count: number, seed: number): Memory[] => {
     return memories;
 };
 
-const GALAXY_MEMORIES: Memory[] = createGalaxyMemories(16, 19052026);
+const MEMORY_COUNT = 16;
 
-function MemoryCard({ memory, onClick, theme }: { memory: Memory; onClick: (m: Memory) => void; theme: any }) {
+function CosmicDust({ theme, cinematic }: Readonly<{ theme: any; cinematic: boolean }>) {
+    const ref = useRef<THREE.Points>(null);
+    const positions = useMemo(() => {
+        const rand = mulberry32(7022026);
+        const count = 1400;
+        const arr = new Float32Array(count * 3);
+        for (let i = 0; i < count; i++) {
+            // Dust cloud around origin, slightly flattened
+            const r = Math.pow(rand(), 0.6) * 22;
+            const a = rand() * Math.PI * 2;
+            const y = (rand() - 0.5) * 6.5;
+            arr[i * 3 + 0] = Math.cos(a) * r;
+            arr[i * 3 + 1] = y;
+            arr[i * 3 + 2] = Math.sin(a) * r;
+        }
+        return arr;
+    }, []);
+
+    useFrame((_state, dt) => {
+        if (!ref.current) return;
+        if (!cinematic) return;
+        ref.current.rotation.y += dt * 0.02;
+        ref.current.rotation.x += dt * 0.006;
+    });
+
+    return (
+        <Points ref={ref} positions={positions} stride={3} frustumCulled>
+            <PointMaterial
+                transparent
+                depthWrite={false}
+                size={theme.isDark ? 0.04 : 0.03}
+                color={theme.isDark ? "#ffffff" : "#fb7185"}
+                opacity={theme.isDark ? 0.42 : 0.20}
+                sizeAttenuation
+            />
+        </Points>
+    );
+}
+
+function MemoryCard({ memory, onClick, theme }: Readonly<{ memory: Memory; onClick: (m: Memory) => void; theme: any }>) {
     const [hovered, setHovered] = useState(false);
 
     return (
@@ -144,9 +184,66 @@ function MemoryCard({ memory, onClick, theme }: { memory: Memory; onClick: (m: M
     );
 }
 
+function UniverseScene({
+    theme,
+    memories,
+    selected,
+    onSelect,
+    cinematic,
+}: Readonly<{
+    theme: any;
+    memories: Memory[];
+    selected: Memory | null;
+    onSelect: (m: Memory) => void;
+    cinematic: boolean;
+}>) {
+    return (
+        <>
+            <fog attach="fog" args={[theme.isDark ? '#0b0410' : '#fdf2f8', 14, 40]} />
+            <ambientLight intensity={theme.isDark ? 0.35 : 0.75} />
+            <pointLight position={[10, 12, 10]} intensity={1.1} color={theme.isDark ? "#fb7185" : "#f97373"} />
+            <pointLight position={[-12, -8, -10]} intensity={0.6} color={theme.isDark ? "#38bdf8" : "#22c55e"} />
+
+            <Stars radius={140} depth={80} count={theme.isDark ? 3800 : 2400} factor={4} saturation={0} fade speed={0.25} />
+            <Sparkles
+                count={theme.isDark ? 90 : 60}
+                speed={0.25}
+                opacity={theme.isDark ? 0.55 : 0.25}
+                color={theme.isDark ? "#fde68a" : "#fb7185"}
+                size={theme.isDark ? 2.0 : 1.6}
+                scale={[30, 16, 30]}
+            />
+            <CosmicDust theme={theme} cinematic={cinematic} />
+
+            <Suspense fallback={null}>
+                {memories.map((m) => (
+                    <MemoryCard key={m.id} memory={m} onClick={onSelect} theme={theme} />
+                ))}
+            </Suspense>
+        </>
+    );
+}
+
 export default function UniversePage() {
     const [selected, setSelected] = useState<Memory | null>(null);
+    const [cinematic, setCinematic] = useState(true);
+    const [seed, setSeed] = useState(19052026);
     const theme = useTimeTheme();
+
+    const memories = useMemo(() => createGalaxyMemories(MEMORY_COUNT, seed), [seed]);
+    const selectedIndex = selected ? memories.findIndex((m) => m.id === selected.id) : -1;
+    const canNav = selectedIndex >= 0;
+
+    const goPrev = () => {
+        if (!canNav) return;
+        const next = (selectedIndex - 1 + memories.length) % memories.length;
+        setSelected(memories[next]);
+    };
+    const goNext = () => {
+        if (!canNav) return;
+        const next = (selectedIndex + 1) % memories.length;
+        setSelected(memories[next]);
+    };
 
     return (
         <div className={cn("relative w-full h-screen overflow-hidden transition-colors duration-1000 bg-gradient-to-br", theme.gradient)}>
@@ -186,28 +283,51 @@ export default function UniversePage() {
                     </div>
 
                     <Canvas camera={{ position: [0, 0, 15], fov: 45 }}>
-                        <fog attach="fog" args={[theme.isDark ? '#0b0410' : '#fdf2f8', 14, 40]} />
-                        <ambientLight intensity={theme.isDark ? 0.35 : 0.75} />
-                        <pointLight position={[10, 12, 10]} intensity={1.1} color={theme.isDark ? "#fb7185" : "#f97373"} />
-                        <pointLight position={[-12, -8, -10]} intensity={0.6} color={theme.isDark ? "#38bdf8" : "#22c55e"} />
-
-                        <Stars radius={120} depth={60} count={2600} factor={4} saturation={0} fade speed={0.25} />
-
-                        <Suspense fallback={null}>
-                            {GALAXY_MEMORIES.map((m) => (
-                                <MemoryCard key={m.id} memory={m} onClick={setSelected} theme={theme} />
-                            ))}
-                        </Suspense>
+                        <UniverseScene
+                            theme={theme}
+                            memories={memories}
+                            selected={selected}
+                            onSelect={setSelected}
+                            cinematic={cinematic}
+                        />
 
                         <OrbitControls
                             enableZoom={true}
                             enablePan={false}
                             minDistance={8}
                             maxDistance={25}
-                            autoRotate
-                            autoRotateSpeed={0.2}
+                            autoRotate={cinematic}
+                            autoRotateSpeed={0.22}
                         />
                     </Canvas>
+
+                    <div className="absolute top-8 right-8 z-20 pointer-events-auto flex flex-col gap-3">
+                        <button
+                            onClick={() => {
+                                setSelected(null);
+                                setSeed((s) => s + 1);
+                            }}
+                            className={cn(
+                                "w-11 h-11 rounded-full glass-card shadow-xl border flex items-center justify-center transition-colors",
+                                theme.isDark ? "bg-white/5 border-white/10 hover:bg-white/10" : "bg-white/60 border-black/5 hover:bg-white/80"
+                            )}
+                            title="Shuffle galaxy"
+                            aria-label="Shuffle galaxy"
+                        >
+                            <Shuffle className={cn("w-5 h-5", theme.textColor)} />
+                        </button>
+                        <button
+                            onClick={() => setCinematic((v) => !v)}
+                            className={cn(
+                                "w-11 h-11 rounded-full glass-card shadow-xl border flex items-center justify-center transition-colors",
+                                theme.isDark ? "bg-white/5 border-white/10 hover:bg-white/10" : "bg-white/60 border-black/5 hover:bg-white/80"
+                            )}
+                            title={cinematic ? "Cinematic mode on" : "Cinematic mode off"}
+                            aria-label="Toggle cinematic mode"
+                        >
+                            <Compass className={cn("w-5 h-5", theme.textColor)} />
+                        </button>
+                    </div>
                 </>
             )}
 
@@ -232,13 +352,32 @@ export default function UniversePage() {
                                 <div className="text-white/70 text-[10px] uppercase tracking-[0.4em] font-bold">
                                     {selected.label}
                                 </div>
-                                <button
-                                    className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-white/80 transition-colors"
-                                    onClick={() => setSelected(null)}
-                                    aria-label="Close"
-                                >
-                                    <X size={18} />
-                                </button>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-white/80 transition-colors"
+                                        onClick={(e) => { e.stopPropagation(); goPrev(); }}
+                                        aria-label="Previous memory"
+                                        title="Previous"
+                                    >
+                                        <ChevronLeft size={18} />
+                                    </button>
+                                    <button
+                                        className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-white/80 transition-colors"
+                                        onClick={(e) => { e.stopPropagation(); goNext(); }}
+                                        aria-label="Next memory"
+                                        title="Next"
+                                    >
+                                        <ChevronRight size={18} />
+                                    </button>
+                                    <button
+                                        className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-white/80 transition-colors"
+                                        onClick={(e) => { e.stopPropagation(); setSelected(null); }}
+                                        aria-label="Close"
+                                        title="Close"
+                                    >
+                                        <X size={18} />
+                                    </button>
+                                </div>
                             </div>
 
                             <motion.img
@@ -250,6 +389,16 @@ export default function UniversePage() {
                                 transition={{ type: "spring", damping: 20, stiffness: 120 }}
                                 className="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-[0_30px_120px_rgba(0,0,0,0.55)]"
                             />
+
+                            <div className="mt-5 flex items-center justify-between">
+                                <div className="text-white/40 text-[9px] uppercase tracking-[0.45em] font-black">
+                                    {selectedIndex + 1} / {memories.length}
+                                </div>
+                                <div className="text-white/50 text-[9px] uppercase tracking-[0.45em] font-black inline-flex items-center gap-2">
+                                    <SparklesIcon size={14} className="text-white/40" />
+                                    Keep drifting
+                                </div>
+                            </div>
                         </motion.div>
                     </motion.div>
                 )}
