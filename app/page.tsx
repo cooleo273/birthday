@@ -3,9 +3,9 @@
 import { motion } from 'framer-motion';
 import CountdownTimer from '@/components/ui/CountdownTimer';
 import FloatingBackground from '@/components/ui/FloatingBackground';
+import SecretLoveTap from '@/components/features/SecretLoveTap';
 import Link from 'next/link';
 import { useTimeTheme } from '@/hooks/useTimeTheme';
-import { Calendar, Globe, Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const BIRTHDAY_DATE = "2026-05-19T00:00:00";
@@ -33,7 +33,8 @@ export default function Home() {
         </motion.div>
 
         <h1 className={`mb-4 select-none ${theme.textColor}`}>
-          Happy Birthday, <span className="serif-display opacity-90">my love.</span>
+          Happy Birthday,{' '}
+          <SecretLoveTap className="serif-display opacity-90">my love.</SecretLoveTap>
         </h1>
 
         <p className={`mb-16 font-medium ${theme.textColor} opacity-60`}>

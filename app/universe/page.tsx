@@ -1,11 +1,12 @@
 'use client';
 
-import { useMemo, useRef, useState, Suspense } from 'react';
+import { useMemo, useRef, useState, Suspense, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Stars, Html, OrbitControls, Float, Sparkles, Points, PointMaterial } from '@react-three/drei';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowLeft, ChevronLeft, ChevronRight, Compass, Sparkles as SparklesIcon, Shuffle } from 'lucide-react';
 import { useTimeTheme } from '@/hooks/useTimeTheme';
+import { useMobile3DQuality, type Mobile3DQualitySettings } from '@/hooks/useMobile3DQuality';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import * as THREE from 'three';
@@ -87,11 +88,15 @@ const createGalaxyMemories = (count: number, seed: number): Memory[] => {
 
 const MEMORY_COUNT = 16;
 
-function CosmicDust({ theme, cinematic }: Readonly<{ theme: any; cinematic: boolean }>) {
+function CosmicDust({
+    theme,
+    cinematic,
+    dustCount,
+}: Readonly<{ theme: { isDark: boolean }; cinematic: boolean; dustCount: number }>) {
     const ref = useRef<THREE.Points>(null);
     const positions = useMemo(() => {
         const rand = mulberry32(7022026);
-        const count = 1400;
+        const count = dustCount;
         const arr = new Float32Array(count * 3);
         for (let i = 0; i < count; i++) {
             // Dust cloud around origin, slightly flattened
@@ -103,7 +108,7 @@ function CosmicDust({ theme, cinematic }: Readonly<{ theme: any; cinematic: bool
             arr[i * 3 + 2] = Math.sin(a) * r;
         }
         return arr;
-    }, []);
+    }, [dustCount]);
 
     useFrame((_state, dt) => {
         if (!ref.current) return;
@@ -126,46 +131,59 @@ function CosmicDust({ theme, cinematic }: Readonly<{ theme: any; cinematic: bool
     );
 }
 
-function MemoryCard({ memory, onClick, theme }: Readonly<{ memory: Memory; onClick: (m: Memory) => void; theme: any }>) {
+function MemoryCard({
+    memory,
+    onClick,
+    theme,
+    quality,
+}: Readonly<{
+    memory: Memory;
+    onClick: (m: Memory) => void;
+    theme: { isDark: boolean; textColor?: string };
+    quality: Mobile3DQualitySettings;
+}>) {
     const [hovered, setHovered] = useState(false);
 
-    return (
-        <Float speed={1.2} rotationIntensity={0.6} floatIntensity={1}>
-            <Html
-                position={memory.position}
-                center
-                distanceFactor={10}
-                occlude="blending"
+    const html = (
+        <Html
+            position={memory.position}
+            center
+            distanceFactor={10}
+            {...(quality.htmlOccludeBlending ? { occlude: 'blending' as const } : {})}
+        >
+            <motion.div
+                onPointerOver={() => setHovered(true)}
+                onPointerOut={() => setHovered(false)}
+                onClick={() => onClick(memory)}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: hovered ? 1.05 : 1 }}
+                className="cursor-pointer group relative touch-manipulation"
             >
-                <motion.div
-                    onPointerOver={() => setHovered(true)}
-                    onPointerOut={() => setHovered(false)}
-                    onClick={() => onClick(memory)}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: hovered ? 1.05 : 1 }}
-                    className="cursor-pointer group relative"
-                >
-                    <div
-                        className={cn(
-                            "absolute inset-0 blur-2xl rounded-2xl opacity-50 transition-all duration-700",
-                            theme.isDark
-                                ? "bg-[radial-gradient(circle_at_top,_#f97373_0,_transparent_55%)] group-hover:opacity-80"
-                                : "bg-[radial-gradient(circle_at_top,_#fb7185_0,_transparent_55%)] group-hover:opacity-80"
-                        )}
-                    />
+                <div
+                    className={cn(
+                        'absolute inset-0 rounded-2xl opacity-50 transition-all duration-700',
+                        quality.cardGlowBlurClass,
+                        theme.isDark
+                            ? 'bg-[radial-gradient(circle_at_top,_#f97373_0,_transparent_55%)] group-hover:opacity-80'
+                            : 'bg-[radial-gradient(circle_at_top,_#fb7185_0,_transparent_55%)] group-hover:opacity-80'
+                    )}
+                />
 
-                    <div
-                        className={cn(
-                            "relative w-24 h-36 backdrop-blur-xl border border-white/20 p-1.5 rounded-xl shadow-[0_12px_30px_rgba(15,23,42,0.4)] flex flex-col items-center overflow-hidden",
-                            theme.isDark ? "bg-white/5" : "bg-white/70"
-                        )}
-                    >
-                        <div className="w-full h-24 overflow-hidden rounded-lg bg-neutral-200">
-                            <img
-                                src={memory.imageUrl}
-                                alt={memory.label}
-                                className="w-full h-full object-cover scale-105 group-hover:scale-110 grayscale-[10%] group-hover:grayscale-0 transition-all duration-[1400ms]"
-                            />
+                <div
+                    className={cn(
+                        'relative w-24 h-36 border border-white/20 p-1.5 rounded-xl shadow-[0_12px_30px_rgba(15,23,42,0.4)] flex flex-col items-center overflow-hidden',
+                        quality.cardBackdropClass,
+                        theme.isDark ? 'bg-white/5' : 'bg-white/70'
+                    )}
+                >
+                    <div className="w-full h-24 overflow-hidden rounded-lg bg-neutral-200">
+                        <img
+                            src={memory.imageUrl}
+                            alt={memory.label}
+                            loading="lazy"
+                            decoding="async"
+                            className="w-full h-full object-cover scale-105 group-hover:scale-110 grayscale-[10%] group-hover:grayscale-0 transition-all duration-[1400ms]"
+                        />
                         </div>
                         <div className="flex-1 flex items-center justify-center px-1 pt-1">
                             <p
@@ -179,24 +197,35 @@ function MemoryCard({ memory, onClick, theme }: Readonly<{ memory: Memory; onCli
                         </div>
                     </div>
                 </motion.div>
-            </Html>
-        </Float>
+        </Html>
     );
+
+    if (quality.useFloatOnCards) {
+        return (
+            <Float speed={1.2} rotationIntensity={0.6} floatIntensity={1}>
+                {html}
+            </Float>
+        );
+    }
+    return html;
 }
 
 function UniverseScene({
     theme,
     memories,
-    selected,
     onSelect,
     cinematic,
+    quality,
 }: Readonly<{
-    theme: any;
+    theme: { isDark: boolean };
     memories: Memory[];
-    selected: Memory | null;
     onSelect: (m: Memory) => void;
     cinematic: boolean;
+    quality: Mobile3DQualitySettings;
 }>) {
+    const starsCount = theme.isDark ? quality.starsDark : quality.starsLight;
+    const sparklesCount = theme.isDark ? quality.sparklesDark : quality.sparklesLight;
+
     return (
         <>
             <fog attach="fog" args={[theme.isDark ? '#0b0410' : '#fdf2f8', 14, 40]} />
@@ -204,20 +233,20 @@ function UniverseScene({
             <pointLight position={[10, 12, 10]} intensity={1.1} color={theme.isDark ? "#fb7185" : "#f97373"} />
             <pointLight position={[-12, -8, -10]} intensity={0.6} color={theme.isDark ? "#38bdf8" : "#22c55e"} />
 
-            <Stars radius={140} depth={80} count={theme.isDark ? 3800 : 2400} factor={4} saturation={0} fade speed={0.25} />
+            <Stars radius={140} depth={80} count={starsCount} factor={4} saturation={0} fade speed={0.25} />
             <Sparkles
-                count={theme.isDark ? 90 : 60}
+                count={sparklesCount}
                 speed={0.25}
                 opacity={theme.isDark ? 0.55 : 0.25}
                 color={theme.isDark ? "#fde68a" : "#fb7185"}
                 size={theme.isDark ? 2.0 : 1.6}
                 scale={[30, 16, 30]}
             />
-            <CosmicDust theme={theme} cinematic={cinematic} />
+            <CosmicDust key={quality.dustCount} theme={theme} cinematic={cinematic} dustCount={quality.dustCount} />
 
             <Suspense fallback={null}>
                 {memories.map((m) => (
-                    <MemoryCard key={m.id} memory={m} onClick={onSelect} theme={theme} />
+                    <MemoryCard key={m.id} memory={m} onClick={onSelect} theme={theme} quality={quality} />
                 ))}
             </Suspense>
         </>
@@ -229,6 +258,17 @@ export default function UniversePage() {
     const [cinematic, setCinematic] = useState(true);
     const [seed, setSeed] = useState(19052026);
     const theme = useTimeTheme();
+    const quality = useMobile3DQuality();
+    const cinematicMobileInitRef = useRef(false);
+
+    useEffect(() => {
+        if (cinematicMobileInitRef.current) return;
+        if (!quality.isMobileCoarse) return;
+        cinematicMobileInitRef.current = true;
+        queueMicrotask(() => setCinematic(false));
+    }, [quality.isMobileCoarse]);
+
+    const effectiveCinematic = cinematic && !quality.prefersReducedMotion;
 
     const memories = useMemo(() => createGalaxyMemories(MEMORY_COUNT, seed), [seed]);
     const selectedIndex = selected ? memories.findIndex((m) => m.id === selected.id) : -1;
@@ -282,13 +322,16 @@ export default function UniversePage() {
                         </motion.p>
                     </div>
 
-                    <Canvas camera={{ position: [0, 0, 15], fov: 45 }}>
+                    <Canvas
+                        camera={{ position: [0, 0, 15], fov: 45 }}
+                        dpr={quality.dpr}
+                    >
                         <UniverseScene
                             theme={theme}
                             memories={memories}
-                            selected={selected}
                             onSelect={setSelected}
-                            cinematic={cinematic}
+                            cinematic={effectiveCinematic}
+                            quality={quality}
                         />
 
                         <OrbitControls
@@ -296,8 +339,8 @@ export default function UniversePage() {
                             enablePan={false}
                             minDistance={8}
                             maxDistance={25}
-                            autoRotate={cinematic}
-                            autoRotateSpeed={0.22}
+                            autoRotate={effectiveCinematic}
+                            autoRotateSpeed={quality.isMobileCoarse ? 0.14 : 0.22}
                         />
                     </Canvas>
 
@@ -383,6 +426,8 @@ export default function UniversePage() {
                             <motion.img
                                 src={selected.imageUrl}
                                 alt={selected.label}
+                                loading="lazy"
+                                decoding="async"
                                 initial={{ scale: 0.99, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 exit={{ scale: 0.99, opacity: 0 }}
