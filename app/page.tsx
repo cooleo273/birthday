@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import CountdownTimer from '@/components/ui/CountdownTimer';
 import FloatingBackground from '@/components/ui/FloatingBackground';
 import SecretLoveTap from '@/components/features/SecretLoveTap';
+import EasterHomeBanner from '@/components/features/EasterHomeBanner';
 import Link from 'next/link';
 import { useTimeTheme } from '@/hooks/useTimeTheme';
 import { cn } from '@/lib/utils';
@@ -31,6 +32,8 @@ export default function Home() {
         >
           {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
         </motion.div>
+
+        <EasterHomeBanner textColorClass={theme.textColor} isDark={theme.isDark} />
 
         <h1 className={`mb-4 select-none ${theme.textColor}`}>
           Happy Birthday,{' '}
